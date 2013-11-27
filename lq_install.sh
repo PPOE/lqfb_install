@@ -50,8 +50,33 @@ fi
 APTITUDE_OPTIONS="-y" # limit bandwidth: -o Acquire::http::Dl-Limit=100"
 export DEBIAN_FRONTEND=noninteractive
 
+# run an aptitude update to make sure python-software-properties
+# dependencies are found
+aptitude update
+aptitude upgrade
 
-# get LQFB data --- repüto github repo
+# install prerequisites
+cat <<PACKAGES | xargs apt-get install $APTITUDE_OPTIONS
+git-core
+
+lua5.1
+postgresql 
+build-essential 
+libpq-dev 
+liblua5.1-0-dev 
+lighttpd 
+ghc 
+libghc6-parsec3-dev 
+imagemagick 
+exim4
+
+PACKAGES
+
+# create lqfb psql user
+echo "CREATE ROLE lqfb WITH CREATEDB PASSWORD '123';" | su postgres -c "psql"
+
+
+# get LQFB data --- repÃ¼to github repo
 git clone https://github.com/PPOE/liquid_ppat_core.git $LQFB_HOME/core
 git clone https://github.com/PPOE/liquid_ppat_frontend.git $LQFB_HOME/frontend
 
